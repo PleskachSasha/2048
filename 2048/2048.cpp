@@ -20,10 +20,10 @@ void ShowBoard()
 }
 void NewNumber()
 {
-	board[0][0] = 2;
-	board[1][0] = 2;
-	board[2][0] = 2;
-	board[3][0] = 2;
+	board[0][3] = 2;
+	board[1][3] = 2;
+	board[2][3] = 2;
+	board[3][3] = 2;
 
 	/*bool flag = false;
 
@@ -45,7 +45,7 @@ void MoveLeft()
 {
 	for (int i = 0; i < 4; i++)
 	{
-		for (int next = 0; next < 2; next++)
+		for (int next = 0; next < 3; next++)
 		{
 			bool zeroFlag = false;
 			bool endWhile = false;
