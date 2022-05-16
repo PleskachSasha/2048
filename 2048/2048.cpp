@@ -97,13 +97,19 @@ void MoveLeft()
 								++itR;
 
 							}
-							if ((board[i][itR] != 0 && itL < itR) || itR > 3)
+							if (itR > 3)
+							{
+								itR = 0;
+								break;
+							}
+							if (board[i][itR] != 0 && itL < itR)
 							{
 								rFlag = true;
 								break;
 							}
-
 							++itR;
+							//???????
+							
 						}
 					}
 
@@ -112,7 +118,7 @@ void MoveLeft()
 						for (int j = 0; j < 4; j++)
 						{
 
-							if (count == 1 && board[i][j] == 0 && itL != 0)
+							if (board[i][j] == 0 && itL != 0 && j < itL)
 							{
 								board[i][j] = board[i][itL];
 								board[i][itL] = 0;
@@ -148,6 +154,7 @@ void MoveLeft()
 								board[i][itR] = 0;
 								break;
 							}
+							
 
 							//BREAK????????
 
