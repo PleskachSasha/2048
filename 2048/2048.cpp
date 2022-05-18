@@ -20,12 +20,12 @@ void ShowBoard()
 }
 void NewNumber()
 {
-	board[0][3] = 2;
-	board[1][3] = 2;
-	board[2][3] = 2;
-	board[3][3] = 2;
+	/*board[0][0] = 2;
+	board[1][0] = 2;
+	board[2][0] = 2;
+	board[3][0] = 2;*/
 
-	/*bool flag = false;
+	bool flag = false;
 
 	while (!flag)
 	{
@@ -37,7 +37,7 @@ void NewNumber()
 			board[n][m] = 2;
 			flag = true;
 		}
-	}*/
+	}
 	
 }
 
@@ -53,7 +53,7 @@ void MoveLeft()
 			while (!endWhile)
 			{
 				int itL = next;
-				int itR = next + 1;
+				int itR = -1;
 
 				int count = 0;
 
@@ -118,14 +118,7 @@ void MoveLeft()
 						for (int j = 0; j < 4; j++)
 						{
 
-							if (board[i][j] == 0 && itL != 0 && j < itL)
-							{
-								board[i][j] = board[i][itL];
-								board[i][itL] = 0;
-								next = 4;
-								break;
-							}
-							else if (board[i][itL] == board[i][itR] && board[i][j] == 0 && j < itL)
+							if (board[i][itL] == board[i][itR] && board[i][j] == 0 && j < itL)
 							{
 								board[i][j] = board[i][itL] * 2;
 								board[i][itR] = 0;
@@ -154,6 +147,14 @@ void MoveLeft()
 								board[i][itR] = 0;
 								break;
 							}
+							else if (board[i][j] == 0 && itL != 0 && j < itL)
+							{
+								board[i][j] = board[i][itL];
+								board[i][itL] = 0;
+								next = 4;
+								break;
+							}
+							
 							
 
 							//BREAK????????
