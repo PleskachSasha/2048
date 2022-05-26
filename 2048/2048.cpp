@@ -20,10 +20,10 @@ void ShowBoard()
 }
 void NewNumber()
 {
-	board[3][0] = 2;
-	board[3][1] = 2;
-	board[3][2] = 2;
-	board[3][3] = 2;
+	board[0][0] = 2;
+	board[0][1] = 2;
+	board[0][2] = 2;
+	board[0][3] = 2;
 
 	bool flag = false;
 
@@ -400,7 +400,126 @@ void MoveUp()
 		}
 	}
 }
-void MoveDown() {}
+
+void MoveDown() 
+{
+	for (int i = 3; i >= 0; --i)
+	{
+		for (int next = 3; next > 0; --next)
+		{
+			bool zeroFlag = false;
+			bool endWhile = false;
+
+			while (!endWhile)
+			{
+				int itL = -1;
+				int itR = next;
+
+				int count = 0;
+
+				for (int q = 0; q < 4; q++)
+				{
+					if (board[q][i] != 0)
+					{
+						count++;
+					}
+				}
+				if (count == 0)
+				{
+					endWhile = true;
+				}
+
+				if (!endWhile)
+				{
+
+					bool rFlag = false;
+					bool lFlag = false;
+
+					while (!rFlag)
+					{
+						if (board[itR][i] != 0 || itR < 0)
+						{
+							rFlag = true;
+							break;
+						}
+						--itR;
+					}
+					
+
+
+					if (count > 1)
+					{
+						itL = next - 1;
+						while (!lFlag)
+						{
+							if (itL == itR)
+							{
+								--itL;
+							}
+							if (itL < 0)
+							{
+								itL = 3;
+								break;
+							}
+							if (board[itL][i] != 0 || itL > 3)
+							{
+								lFlag = true;
+								break;
+							}
+							--itL;
+						}					
+					}
+
+					if (itR > -1)
+					{
+						for (int j = 3; j >= 0; --j)
+						{
+
+							if (board[itR][i] == board[itL][i] && board[j][i] == 0 && j > itR)
+							{
+								board[j][i] = board[itR][i] * 2;
+								board[itR][i] = 0;
+								board[itL][i] = 0;
+								j++;
+								break;
+							}
+							else if (board[itR][i] == board[itL][i] && j < itR)
+							{
+								board[itR][i] *= 2;
+								board[itL][i] = 0;
+								j++;
+								break;
+							}
+							else if (board[itR][i] != board[itL][i] && count > 1 && itL < j && itR > j && board[j][i] == 0)
+							{
+								board[j][i] = board[itL][i];
+								board[itL][i] = 0;
+								break;
+							}
+							else if (board[itR][i] != board[itL][i] && count > 1 && itL < j && itR < j && board[j][i] == 0)
+							{
+								board[j][i] = board[itR][i];
+								board[itR][i] = board[itL][i];
+								board[itL][i] = 0;
+								break;
+							}
+							//1
+							else if (board[j][i] == 0 && itR != 3 && j > itR)
+							{
+								board[j][i] = board[itR][i];
+								board[itR][i] = 0;
+								next = 0;
+								break;
+							}
+						}
+					}
+
+				}
+				endWhile = true;
+			}
+		}
+	}
+}
 
 void GameOver() {}
 
@@ -441,7 +560,7 @@ int main()
 		cin >> i;
 		if (i == 1)
 		{
-			MoveUp();
+			MoveDown();
 		}		
 	}
 }
