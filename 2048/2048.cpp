@@ -6,28 +6,78 @@ using namespace std;
 
 const int BOARD_SIZE = 4;
 int board[BOARD_SIZE][BOARD_SIZE]{};
+int prevBoard[BOARD_SIZE][BOARD_SIZE]{};
+
+int score = 0;
+
+enum EnumChoise
+{
+	choice_A = 97,
+	choice_W = 119,
+	choice_D = 100,
+	choice_S = 115,
+	choice_E = 101
+};
+
+void ScoreIncrease(int value)
+{
+	score += value;
+}
+
+void ShowScore()
+{
+	std::cout << "SCORE: " << score << endl;
+}
+
+void FillPrevBoard()
+{
+	for (int i = 0; i < BOARD_SIZE; ++i)
+	{
+		for (int j = 0; j < BOARD_SIZE; ++j)
+		{
+			prevBoard[i][j] = board[i][j];
+		}
+	}
+}
+
+bool CompareBoard()
+{
+	bool compare = true;
+
+	for (int i = 0; i < BOARD_SIZE; ++i)
+	{
+		for (int j = 0; j < BOARD_SIZE; ++j)
+		{
+			if (prevBoard[i][j] != board[i][j])
+			{
+				compare = false;
+			}
+		}
+	}
+
+	return compare;
+}
 
 void ShowBoard()
 {
-	for (size_t i = 0; i < BOARD_SIZE; ++i)
+	for (int i = 0; i < BOARD_SIZE; ++i)
 	{
-		for (size_t j = 0; j < BOARD_SIZE; ++j)
+		for (int j = 0; j < BOARD_SIZE; ++j)
 		{
 			cout << board[i][j] << "\t";
 		}
-		cout << endl;
+		cout << endl << endl;
 	}
 }
 void NewNumber()
 {
 	board[0][0] = 2;
-	board[0][1] = 2;
-	board[0][2] = 2;
-	board[0][3] = 2;
+	board[1][0] = 4;
+	board[2][0] = 2;
+	board[3][0] = 0;
 
-	bool flag = false;
-
-	/*while (!flag)
+	/*bool flag = false;
+	while (!flag)
 	{
 		int n = rand() % 4;
 		int m = rand() % 4;
@@ -38,14 +88,33 @@ void NewNumber()
 			flag = true;
 		}
 	}*/
-	
 }
 
+void CountZero(bool& zero, int count)
+{
+	if (count == 0)
+	{
+		zero = true;
+	}
+}
+
+int CountNumberLeftRight(int line)
+{
+	int count = 0;
+	for (int q = 0; q < 4; ++q)
+	{
+		if (board[line][q] != 0)
+		{
+			++count;
+		}
+	}
+	return count;
+}
 void MoveLeft() 
 {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; ++i)
 	{
-		for (int next = 0; next < 3; next++)
+		for (int next = 0; next < 3; ++next)
 		{
 			bool zeroFlag = false;
 			bool endWhile = false;
@@ -54,42 +123,25 @@ void MoveLeft()
 			{
 				int itL = next;
 				int itR = -1;
+					int count = CountNumberLeftRight(i);
 
-				int count = 0;
-
-				for (int q = 0; q < 4; q++)
-				{
-					if (board[i][q] != 0)
-					{
-						count++;
-					}
-				}
-				if (count == 0)
-				{
-					endWhile = true;
-				}
+				CountZero(endWhile, count);
+				
 
 				if (!endWhile)
 				{
-
-					bool rFlag = false;
-					bool lFlag = false;
-
-					while (!lFlag)
+					while (true)
 					{
-						
 						if (board[i][itL] != 0 || itL > 3)
 						{
-							lFlag = true;
 							break;
 						}
 						++itL;
 					}
 
-
 					if (count > 1)
 					{
-						while (!rFlag)
+						while (true)
 						{
 							if (itL == itR)
 							{
@@ -98,12 +150,11 @@ void MoveLeft()
 							}
 							if (itR > 3)
 							{
-								itR = 0;
+								itR = -1;
 								break;
 							}
 							if (board[i][itR] != 0 && itL < itR)
 							{
-								rFlag = true;
 								break;
 							}
 							++itR;							
@@ -112,23 +163,23 @@ void MoveLeft()
 
 					if (itL < 4 && itR < 4)
 					{
-						for (int j = 0; j < 4; j++)
+						for (int j = 0; j < 4; ++j)
 						{
-
 							if (board[i][itL] == board[i][itR] && board[i][j] == 0 && j < itL)
 							{
 								board[i][j] = board[i][itL] * 2;
 								board[i][itR] = 0;
 								board[i][itL] = 0;
-								j--;
+								--j;
+								ScoreIncrease(board[i][j]);
 								break;
-								
 							}
 							else if (board[i][itL] == board[i][itR] && j > itL)
 							{
 								board[i][itL] *= 2;
 								board[i][itR] = 0;
-								j--;
+								--j;
+								ScoreIncrease(board[i][itL]);
 								break;
 							}
 							else if (board[i][itL] != board[i][itR] && count > 1 && itL < j && itR > j && board[i][j] == 0)
@@ -153,14 +204,12 @@ void MoveLeft()
 							}
 						}
 					}
-					
 				}
 				endWhile = true;
 			}
 		}
 	}
 }
-
 void MoveRight()
 {
 	for (int i = 3; i >= 0; --i)
@@ -174,43 +223,25 @@ void MoveRight()
 			{
 				int itL = 4;
 				int itR = next;
+				int count = CountNumberLeftRight(i);
 
-				int count = 0;
-
-				for (int q = 0; q < 4; q++)
-				{
-					if (board[i][q] != 0)
-					{
-						count++;
-					}
-				}
-				if (count == 0)
-				{
-					endWhile = true;
-				}
+				CountZero(endWhile, count);
 
 				if (!endWhile)
 				{
-					bool rFlag = false;
-					bool lFlag = false;
-
-					while (!rFlag)
+					while (true)
 					{
 						if (board[i][itR] != 0 || itR < 0)
 						{
-							rFlag = true;
 							break;
 						}
 						--itR;
 					}
 
-					
-
-
 					if (count > 1)
 					{
 						itL = 3;
-						while (!lFlag)
+						while (true)
 						{
 							if (itL == itR)
 							{
@@ -223,7 +254,6 @@ void MoveRight()
 							}
 							if (board[i][itL] != 0 && itL < itR)
 							{
-								lFlag = true;
 								break;
 							}
 							--itL;
@@ -234,21 +264,21 @@ void MoveRight()
 					{
 						for (int j = 3; j >= 0; --j)
 						{
-
 							if (board[i][itL] == board[i][itR] && board[i][j] == 0 && j > itR)
 							{
 								board[i][j] = board[i][itR] * 2;
 								board[i][itR] = 0;
 								board[i][itL] = 0;
 								++j;
+								ScoreIncrease(board[i][j]);
 								break;
-
 							}
 							else if (board[i][itL] == board[i][itR] && j < itR)
 							{
 								board[i][itR] *= 2;
 								board[i][itL] = 0;
 								++j;
+								ScoreIncrease(board[i][itR]);
 								break;
 							}
 							else if (board[i][itL] != board[i][itR] && count > 1 && itL < j && itR > j && board[i][j] == 0)
@@ -281,11 +311,24 @@ void MoveRight()
 	}
 }
 
+int CountNumberUpDown(int line)
+{
+	int count = 0;
+	for (int q = 0; q < 4; ++q)
+	{
+		if (board[q][line] != 0)
+		{
+			++count;
+		}
+	}
+
+	return count;
+}
 void MoveUp()
 {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; ++i)
 	{
-		for (int next = 0; next < 3; next++)
+		for (int next = 0; next < 3; ++next)
 		{
 			bool zeroFlag = false;
 			bool endWhile = false;
@@ -294,42 +337,25 @@ void MoveUp()
 			{
 				int itL = next;
 				int itR = -1;
+				int count = CountNumberUpDown(i);
 
-				int count = 0;
-
-				for (int q = 0; q < 4; q++)
-				{
-					if (board[q][i] != 0)
-					{
-						count++;
-					}
-				}
-				if (count == 0)
-				{
-					endWhile = true;
-				}
+				CountZero(endWhile, count);
 
 				if (!endWhile)
 				{
-
-					bool rFlag = false;
-					bool lFlag = false;
-
-					while (!lFlag)
+					while (true)
 					{
 
 						if (board[itL][i] != 0 || itL > 3)
 						{
-							lFlag = true;
 							break;
 						}
 						++itL;
 					}
 
-
 					if (count > 1)
 					{
-						while (!rFlag)
+						while (true)
 						{
 							if (itL == itR)
 							{
@@ -337,13 +363,12 @@ void MoveUp()
 
 							}
 							if (itR > 3)
-							{
-								itR = 0;
+							{	
+								itR = -1;
 								break;
 							}
 							if (board[itR][i] != 0 && itL < itR)
 							{
-								rFlag = true;
 								break;
 							}
 							++itR;
@@ -352,7 +377,7 @@ void MoveUp()
 
 					if (itL < 4 && itR < 4)
 					{
-						for (int j = 0; j < 4; j++)
+						for (int j = 0; j < 4; ++j)
 						{
 
 							if (board[itR][i] == board[itL][i] && board[j][i] == 0 && j < itL)
@@ -360,15 +385,16 @@ void MoveUp()
 								board[j][i] = board[itL][i] * 2;
 								board[itR][i] = 0;
 								board[itL][i] = 0;
-								j--;
+								--j;
+								ScoreIncrease(board[j][i]);
 								break;
-
 							}
 							else if (board[itR][i] == board[itL][i] && j > itL)
 							{
 								board[itL][i] *= 2;
 								board[itR][i] = 0;
-								j--;
+								--j;
+								ScoreIncrease(board[itL][i]);
 								break;
 							}
 							else if (board[itR][i] != board[itL][i] && count > 1 && itL < j && itR > j && board[j][i] == 0)
@@ -400,7 +426,6 @@ void MoveUp()
 		}
 	}
 }
-
 void MoveDown() 
 {
 	for (int i = 3; i >= 0; --i)
@@ -415,42 +440,25 @@ void MoveDown()
 				int itL = -1;
 				int itR = next;
 
-				int count = 0;
+				int count = CountNumberUpDown(i);
 
-				for (int q = 0; q < 4; q++)
-				{
-					if (board[q][i] != 0)
-					{
-						count++;
-					}
-				}
-				if (count == 0)
-				{
-					endWhile = true;
-				}
+				CountZero(endWhile, count);
 
 				if (!endWhile)
 				{
-
-					bool rFlag = false;
-					bool lFlag = false;
-
-					while (!rFlag)
+					while (true)
 					{
 						if (board[itR][i] != 0 || itR < 0)
 						{
-							rFlag = true;
 							break;
 						}
 						--itR;
 					}
-					
-
 
 					if (count > 1)
 					{
 						itL = next - 1;
-						while (!lFlag)
+						while (true)
 						{
 							if (itL == itR)
 							{
@@ -458,12 +466,11 @@ void MoveDown()
 							}
 							if (itL < 0)
 							{
-								itL = 3;
+								itL = -1;
 								break;
 							}
 							if (board[itL][i] != 0 || itL > 3)
 							{
-								lFlag = true;
 								break;
 							}
 							--itL;
@@ -480,14 +487,16 @@ void MoveDown()
 								board[j][i] = board[itR][i] * 2;
 								board[itR][i] = 0;
 								board[itL][i] = 0;
-								j++;
+								++j;
+								ScoreIncrease(board[j][i]);
 								break;
 							}
 							else if (board[itR][i] == board[itL][i] && j < itR)
 							{
 								board[itR][i] *= 2;
 								board[itL][i] = 0;
-								j++;
+								++j;
+								ScoreIncrease(board[itR][i]);
 								break;
 							}
 							else if (board[itR][i] != board[itL][i] && count > 1 && itL < j && itR > j && board[j][i] == 0)
@@ -503,7 +512,6 @@ void MoveDown()
 								board[itL][i] = 0;
 								break;
 							}
-							//1
 							else if (board[j][i] == 0 && itR != 3 && j > itR)
 							{
 								board[j][i] = board[itR][i];
@@ -521,47 +529,104 @@ void MoveDown()
 	}
 }
 
-void GameOver() {}
-
-
-void Menu()
+bool CanMove() 
 {
-	ShowBoard();
-	cout << "a:left\t w:up\t d:right\t s:down\t e:EndGame" << endl;
+	bool canMove = false;
+
+	for (int i = 0; i < BOARD_SIZE; ++i)
+	{
+		for (int j = 0; j < BOARD_SIZE; ++j)
+		{
+			if (board[i][j] == 0)
+			{
+				canMove = true;
+			}
+		}
+	}
+	if (!canMove)
+	{
+		for (int i = 0; i < BOARD_SIZE - 1; ++i)
+		{
+			for (int j = 0; j < BOARD_SIZE - 1; ++j)
+			{
+				if (board[i][j] == board[i][j + 1] || board[j][i] == board[j + 1][i])
+				{
+					canMove = true;
+				}
+			}
+		}
+	}
 	
+	return canMove;
 }
-
-void PlayerChoice()
+	
+int PlayerChoice()
 {
+	cout << "a:left\t w:up\t d:right\t s:down\t e:EndGame" << endl;
+
 	char choice;
 	cin >> choice;
-
-	/*switch (choice)
-	{
-	case 61: 
-		cout << "aaaaaaa";
-		break;
-	default:
-		cout << "asdasd";
-		break;
-	}*/
+	
+	return choice;
 }
+void Menu()
+{
+	bool flag = false;
+
+	NewNumber();
+
+	while (!flag)
+	{
+		FillPrevBoard();
+		ShowBoard();
+		ShowScore();
+		if (CanMove())
+		{
+			int choice = PlayerChoice();
+
+			switch (choice)
+			{
+			case choice_A:
+				MoveLeft();
+				break;
+			case choice_W:
+				MoveUp();
+				break;
+			case choice_D:
+				MoveRight();
+				break;
+			case choice_S:
+				MoveDown();
+				break;
+			case choice_E:
+				cout << "End game" << endl;
+				flag = true;
+				break;
+			default:
+				cout << "You entered an invalid letter" << endl;
+				break;
+			}
+
+
+			/*if (!CompareBoard())
+			{
+				NewNumber();
+			}*/
+		}
+		else
+		{
+			flag = true;
+			cout << "GAME OVER" << endl;
+		}
+	}
+}
+
+
 
 int main()
 {
 	srand(time(NULL));
-	int i = 0;
-	while (true)
-	{
-		NewNumber();
-		Menu();
-		
-		int i;
-		cin >> i;
-		if (i == 1)
-		{
-			MoveDown();
-		}		
-	}
+	Menu();
+	
 }
 
