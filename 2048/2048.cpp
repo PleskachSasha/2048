@@ -2,7 +2,6 @@
 #include <conio.h>
 #include <string>
 
-using namespace std;
 
 const int BOARD_SIZE = 4;
 int board[BOARD_SIZE][BOARD_SIZE]{};
@@ -26,7 +25,7 @@ void ScoreIncrease(int value)
 
 void ShowScore()
 {
-	std::cout << "SCORE: " << score << endl;
+	std::cout << "SCORE: " << score << std::endl;
 }
 
 void FillPrevBoard()
@@ -64,30 +63,36 @@ void ShowBoard()
 	{
 		for (int j = 0; j < BOARD_SIZE; ++j)
 		{
-			cout << board[i][j] << "\t";
+			std::cout << board[i][j] << "\t";
 		}
-		cout << endl << endl;
+		std::cout << std::endl << std::endl;
 	}
 }
 void NewNumber()
 {
-	board[0][0] = 2;
-	board[1][0] = 4;
-	board[2][0] = 2;
-	board[3][0] = 0;
+	
 
-	/*bool flag = false;
+	bool flag = false;
 	while (!flag)
 	{
+		int twoOrFour = rand() % 10;
+
 		int n = rand() % 4;
 		int m = rand() % 4;
 
 		if (board[n][m] == 0)
 		{
-			board[n][m] = 2;
+			if (score > 100 && twoOrFour > 8)
+			{
+				board[n][m] = 2;
+			}
+			else
+			{
+				board[n][m] = 2;
+			}
 			flag = true;
 		}
-	}*/
+	}
 }
 
 void CountZero(bool& zero, int count)
@@ -559,19 +564,41 @@ bool CanMove()
 	
 	return canMove;
 }
+void End2048(bool& flag)
+{
+	for (int i = 0; i < BOARD_SIZE; ++i)
+	{
+		for (int j = 0; j < BOARD_SIZE; ++j)
+		{
+			if (board[i][j] == 2048)
+			{
+				ShowBoard();
+				ShowScore();
+				std::cout << "Do you want to continue playing \n1.Yes \n2.No" << std::endl;
+				int end;
+				std::cin >> end;
+				if (end == 2)
+				{
+					flag = true;
+				}
+			}
+		}
+	}
+}
 	
 int PlayerChoice()
 {
-	cout << "a:left\t w:up\t d:right\t s:down\t e:EndGame" << endl;
+	std::cout << "a:left\t w:up\t d:right\t s:down\t e:EndGame" << std::endl;
 
 	char choice;
-	cin >> choice;
+	std::cin >> choice;
 	
 	return choice;
 }
 void Menu()
 {
 	bool flag = false;
+	bool end2048 = false;
 
 	NewNumber();
 
@@ -580,6 +607,7 @@ void Menu()
 		FillPrevBoard();
 		ShowBoard();
 		ShowScore();
+		
 		if (CanMove())
 		{
 			int choice = PlayerChoice();
@@ -599,24 +627,29 @@ void Menu()
 				MoveDown();
 				break;
 			case choice_E:
-				cout << "End game" << endl;
+				std::cout << "End game" << std::endl;
 				flag = true;
 				break;
 			default:
-				cout << "You entered an invalid letter" << endl;
+				std::cout << "You entered an invalid letter" << std::endl;
 				break;
 			}
+			if (!end2048)
+			{
+				End2048(flag);
+				end2048 = true;
+			}
+			
 
-
-			/*if (!CompareBoard())
+			if (!CompareBoard())
 			{
 				NewNumber();
-			}*/
+			}
 		}
 		else
 		{
 			flag = true;
-			cout << "GAME OVER" << endl;
+			std::cout << "GAME OVER" << std::endl;
 		}
 	}
 }
