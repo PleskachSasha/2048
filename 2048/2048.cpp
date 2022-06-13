@@ -604,6 +604,7 @@ void Menu()
 
 	while (!flag)
 	{
+		system("cls");
 		FillPrevBoard();
 		ShowBoard();
 		ShowScore();
