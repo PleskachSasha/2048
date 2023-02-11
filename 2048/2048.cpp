@@ -1,7 +1,8 @@
 ﻿#include <iostream>
 #include <conio.h>
 #include <string>
-
+#include <stdio.h>
+#include <conio.h>
 
 const int BOARD_SIZE = 4;
 int board[BOARD_SIZE][BOARD_SIZE]{};
@@ -11,11 +12,22 @@ int score = 0;
 
 enum EnumChoise
 {
-	choice_A = 97,
-	choice_W = 119,
-	choice_D = 100,
-	choice_S = 115,
-	choice_E = 101
+	choice_Left_Arrow = 75,
+	choice_Right_Arrow = 77,
+	choice_Down_Arrow = 80,
+	choice_Up_Arrow = 72,
+	
+	choice_a = 97,
+	choice_d = 100,
+	choice_s = 115,
+	choice_w = 119,
+	choice_e = 101,
+
+	choice_A = 65,
+	choice_D = 68,
+	choice_S = 83,
+	choice_W = 87,
+	choice_E = 69
 };
 
 void ScoreIncrease(int value)
@@ -70,8 +82,6 @@ void ShowBoard()
 }
 void NewNumber()
 {
-	
-
 	bool flag = false;
 	while (!flag)
 	{
@@ -82,9 +92,9 @@ void NewNumber()
 
 		if (board[n][m] == 0)
 		{
-			if (score > 100 && twoOrFour > 8)
+			if (score > 100 && twoOrFour > 7)
 			{
-				board[n][m] = 2;
+				board[n][m] = 4;
 			}
 			else
 			{
@@ -128,10 +138,9 @@ void MoveLeft()
 			{
 				int itL = next;
 				int itR = -1;
-					int count = CountNumberLeftRight(i);
+				int count = CountNumberLeftRight(i);
 
 				CountZero(endWhile, count);
-				
 
 				if (!endWhile)
 				{
@@ -564,7 +573,7 @@ bool CanMove()
 	
 	return canMove;
 }
-void End2048(bool& flag)
+void End2048(bool& flag, bool& end2048)
 {
 	for (int i = 0; i < BOARD_SIZE; ++i)
 	{
@@ -572,14 +581,18 @@ void End2048(bool& flag)
 		{
 			if (board[i][j] == 2048)
 			{
+				system("cls");
 				ShowBoard();
 				ShowScore();
-				std::cout << "Do you want to continue playing \n1.Yes \n2.No" << std::endl;
-				int end;
-				std::cin >> end;
-				if (end == 2)
+
+				std::cout << "\nYOU WIN!!!\nDo you want to continue playing \n1.Yes \n2.No" << std::endl;
+				int end = _getch();
+
+				end2048 = true;
+				if (end == 50)
 				{
 					flag = true;
+					break;
 				}
 			}
 		}
@@ -588,10 +601,9 @@ void End2048(bool& flag)
 	
 int PlayerChoice()
 {
-	std::cout << "a:left\t w:up\t d:right\t s:down\t e:EndGame" << std::endl;
+	std::cout << "a:left  w:up  d:right  s:down  e:EndGame\nOr you can control the arrows" << std::endl;
 
-	char choice;
-	std::cin >> choice;
+	int choice = _getch();
 	
 	return choice;
 }
@@ -611,36 +623,46 @@ void Menu()
 		
 		if (CanMove())
 		{
-			int choice = PlayerChoice();
-
-			switch (choice)
+			switch (int choice{PlayerChoice()}; choice)
 			{
+			case choice_Left_Arrow:
+			case choice_a:
 			case choice_A:
 				MoveLeft();
 				break;
+
+			case choice_Up_Arrow:
+			case choice_w:
 			case choice_W:
 				MoveUp();
 				break;
+
+			case choice_Right_Arrow:
+			case choice_d:
 			case choice_D:
 				MoveRight();
 				break;
+			
+			case choice_Down_Arrow:
+			case choice_s:
 			case choice_S:
 				MoveDown();
 				break;
-			case choice_E:
+
+			case choice_e:
 				std::cout << "End game" << std::endl;
 				flag = true;
 				break;
+
 			default:
 				std::cout << "You entered an invalid letter" << std::endl;
 				break;
 			}
+
 			if (!end2048)
 			{
-				End2048(flag);
-				end2048 = true;
+				End2048(flag, end2048);
 			}
-			
 
 			if (!CompareBoard())
 			{
@@ -656,11 +678,10 @@ void Menu()
 }
 
 
-
 int main()
 {
 	srand(time(NULL));
 	Menu();
-	
 }
+	
 
